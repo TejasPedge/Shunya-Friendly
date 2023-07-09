@@ -1,0 +1,11 @@
+.add-user-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+}
+
+.tablecontainer {
+    margin: auto;
+    margin-top: 20px;
+    width : 80%;
+}
