@@ -19,11 +19,14 @@ const userSlice = createSlice({
     },
     requestFailed : (state, {payload}) => {
         state.isLoading = false;
-        state.isError = true;
+        state.isError = payload;
     },
+    postRequestSuccess : (state, {payload}) => {
+      state.isLoading = false;
+    }
   }
 });
 
 
-export const { requestMade, requestSuccess, requestFailed} = userSlice.actions;
+export const { requestMade, requestSuccess, requestFailed, postRequestSuccess} = userSlice.actions;
 export default userSlice.reducer;

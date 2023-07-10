@@ -1,94 +1,26 @@
 import React from 'react'
-import {Button, Table, Tag } from 'antd';
-import { EditOutlined } from '@ant-design/icons';
-import { useSelector,useDispatch } from 'react-redux';
-import { requestMade } from '../Redux/userreducer';
+import {Table} from 'antd';
+import { Spin } from 'antd';
+import {Empty} from 'antd';
+
+const TableComponent = ({isLoading,columns,formattedData}) => {
 
 
-
-
-
-const data = [
-  {
-    key : 1,
-    id : 1,
-    name: 'John Brown',
-    button1 : 'View',
-    button2 : 'Edit',
-    button3 : 'Delete',
-  },
-  {
-    key : 2,
-    id: '2',
-    name: 'Jim Green',
-    button1 : 'View',
-    button2 : 'Edit',
-    button3 : 'Delete',
-  },
-  {
-    key : 3,
-    id: '3',
-    name: 'Joe Black',
-    button1 : 'View',
-    button2 : 'Edit',
-    button3 : 'Delete',
-  },
-];
-
-const TableComponent = () => {
-
-    const dispatch = useDispatch();
-
-    const state = useSelector(state => state);
-
-    console.log('dsfsdfdsf',state);
-
-    const handleClick = () => {
-        console.log('hii');
-        
+    if(isLoading) {
+      return <div style = {{display : 'flex', justifyContent : 'center', marginTop : '10px'}}><Spin/></div>
     }
 
-    const columns = [
-        {
-          title: 'User ID',
-          dataIndex: 'id',
-          render: (text, record) => {
-              console.log(record)
-          return <span style = {{color : '#0088ff'}}>{text}</span>
-          }
-        },
-        {
-          title: 'Name',
-          dataIndex: 'name',
-        },
-        {
-          title: 'View',
-          dataIndex: 'button1',
-          render : (text) => {
-              return <Button onClick = {handleClick}>{text}</Button>
-          }
-        },
-        {
-          title: 'Edit',
-          dataIndex: 'button2',
-          render : (text) => {
-              return <Button icon = {<EditOutlined />}>{text}</Button>
-          }
-        },
-        {
-          title: 'Delete',
-          dataIndex: 'button3',
-          render : (text) => {
-              return <Button danger = {true}>{text}</Button>
-          }
-        },
-      ];
+    if(formattedData.length === 0) {
+      return <div style = {{display : 'flex', justifyContent : 'center', marginTop : '100px'}}>
+        <Empty description={
+            <span>
+              No Users Added
+            </span>
+          }/>
+      </div>
+    }
 
-
-
-
-    
-    return <Table columns={columns} dataSource={data} />;
+    return <Table columns={columns} dataSource={formattedData} />;
 
 }
 
