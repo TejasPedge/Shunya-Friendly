@@ -4,6 +4,7 @@ const initialState = {
   users: [],
   isLoading : false,
   isError : false,
+  singleUser : null
 };
 
 const userSlice = createSlice({
@@ -15,6 +16,7 @@ const userSlice = createSlice({
     },
     requestSuccess : (state, {payload}) => {
         state.isLoading = false;
+        state.isError = false;
         state.users = payload;
     },
     requestFailed : (state, {payload}) => {
@@ -23,10 +25,14 @@ const userSlice = createSlice({
     },
     postRequestSuccess : (state, {payload}) => {
       state.isLoading = false;
+    },
+    single_User_Get_Request_Success : (state, {payload}) => {
+      state.isLoading = false;
+      state.singleUser = payload;
     }
   }
 });
 
 
-export const { requestMade, requestSuccess, requestFailed, postRequestSuccess} = userSlice.actions;
+export const { requestMade, requestSuccess, requestFailed, postRequestSuccess, single_User_Get_Request_Success} = userSlice.actions;
 export default userSlice.reducer;

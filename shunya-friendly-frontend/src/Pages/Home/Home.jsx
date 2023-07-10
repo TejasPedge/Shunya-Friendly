@@ -1,58 +1,13 @@
 import React, { useEffect } from 'react'
-import { Button } from 'antd';
-import { UserAddOutlined, EditOutlined } from '@ant-design/icons';
+import { Button, message } from 'antd';
+import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import style from './Home.module.css'
 import TableComponent from '../../Components/TableComp';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link } from 'react-router-dom';
 import { formatApiData } from '../../utils/formatApiData';
 import { getData } from '../../Actions/fetchApiData';
-
-
-
-
-const columns = [
-  {
-    title: 'User ID',
-    dataIndex: 'user_id',
-    render: (text) => {
-    return <span style = {{color : '#0088ff'}}>{text}</span>
-    }
-  },
-  {
-    title: 'Name',
-    dataIndex: 'name',
-  },
-  {
-    title: 'View',
-    dataIndex: 'button1',
-    render : (text, record) => {
-        return <Link to = {`/view-user/${record.user_id}`} >
-                    <Button>{text}</Button>
-              </Link>
-    }
-  },
-  {
-    title: 'Edit',
-    dataIndex: 'button2',
-    render : (text) => {
-        return <Button icon = {<EditOutlined />}>{text}</Button>
-    }
-  },
-  {
-    title: 'Delete',
-    dataIndex: 'button3',
-    render : (text) => {
-        return <Button danger = {true}>{text}</Button>
-    }
-  },
-];
-
-
-
-
-
-
+import {Popconfirm} from 'antd';
 
 
 
@@ -69,6 +24,59 @@ const Home = () => {
     dispatch(getData(url));
   },[]);
 
+  const handleDelete = () => {
+    message.success('USer Deleted')
+      console.log('hii')
+  }
+
+
+  const columns = [
+    {
+      title: 'User ID',
+      dataIndex: 'user_id',
+      render: (text) => {
+      return <span style = {{color : '#0088ff'}}>{text}</span>
+      }
+    },
+    {
+      title: 'Name',
+      dataIndex: 'name',
+    },
+    {
+      title: 'View',
+      dataIndex: 'button1',
+      render : (text, record) => {
+          return <Link to = {`/view-user/${record.user_id}`} >
+                      <Button>{text}</Button>
+                </Link>
+      }
+    },
+    {
+      title: 'Edit',
+      dataIndex: 'button2',
+      render : (text, record) => {
+          return <Link to = '/create-user?from=edit' state = {record}>
+              <Button icon = {<EditOutlined />}>{text}</Button>
+          </Link>
+      }
+    },
+    {
+      title: 'Delete',
+      dataIndex: 'button3',
+      render : (text) => {
+          return <Popconfirm
+          title="Delete the task"
+          description="Are you sure to delete this User?"
+          onConfirm={handleDelete}
+          okText="Yes"
+          cancelText="No"
+        > 
+          <Button icon = {<DeleteOutlined />} danger = {true}>{text}</Button>
+        </Popconfirm>
+      }
+    },
+  ];
+
 
 
   // It handles the error if there is an network error or the server Error
@@ -81,7 +89,7 @@ const Home = () => {
   return (
     <>
         <div className = {style['add-user-container']}>
-            <Link to = '/create-user'><Button type = 'primary' icon = {<UserAddOutlined />}>Add Users</Button></Link>
+            <Link to = '/create-user?from=addUser'><Button type = 'primary' icon = {<UserAddOutlined />}>Add Users</Button></Link>
         </div>
 
         <div className = {style.tablecontainer}>

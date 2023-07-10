@@ -11,6 +11,8 @@ export const formatApiData = (data) => {
         obj.key = el._id;
         obj.user_id = el._id;
         obj.name = el.name;
+        obj.email = el.email;
+        obj.phone = el.phone;
         obj.button1 = 'View';
         obj.button2 = 'Edit';
         obj.button3 = 'Delete';
