@@ -2,6 +2,9 @@
 
 export const formatApiData = (data) => {
 
+    if (!data) {
+        return null;
+    }
     if(data.length === 0) {
         return [];
     }

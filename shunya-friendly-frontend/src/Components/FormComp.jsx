@@ -40,7 +40,7 @@ const validatePhoneNumber = (_, value) => {
 const FormComp = () => {
 
     const [messageApi, contextHolder] = message.useMessage();
-    const {isLoading,isError} = useSelector(({userReducer}) => userReducer)
+    const {isLoading,isError} = useSelector(({userReducer}) => userReducer.postData)
     const dispatch = useDispatch();
 
     const {state} = useLocation();

@@ -55,15 +55,14 @@ const ViewUser = () => {
     },[]);
 
     // It handles the error if there is an network error or the server Error
-    if(isError.message === 'Network Error') {
-      return <h3 style = {{textAlign : 'center', color : '#f95c5c', marginTop : '50px'}}>Please Check Your Internet Connection</h3>
-    }else if(isError.message === 'Server Error') {
-      return <h3 style = {{textAlign : 'center', color : '#f95c5c', marginTop : '50px'}}>Unable to connect to the Server Please Contact the Admin</h3>
+    
+    if(isError.message) {
+      return <h3 style = {{textAlign : 'center', color : '#f95c5c', marginTop : '50px'}}>{isError.message}</h3>
     }
 
   return (
     <div style = {{margin : 'auto', marginTop : '60px', width : '80%'}}>
-      {singleUser && <TableComponent isLoading = {isLoading} columns = {columns} formattedData ={formattedData} />}
+      <TableComponent isLoading = {isLoading} columns = {columns} formattedData ={formattedData} />
     </div>
   )
 }

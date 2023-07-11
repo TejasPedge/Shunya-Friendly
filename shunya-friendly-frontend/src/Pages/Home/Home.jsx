@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Button, message } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import style from './Home.module.css'
@@ -8,13 +8,15 @@ import { Link } from 'react-router-dom';
 import { formatApiData } from '../../utils/formatApiData';
 import { getData } from '../../Actions/fetchApiData';
 import {Popconfirm} from 'antd';
-
-
-
+import { deleteUser } from '../../Actions/fetchApiData';
 
 const Home = () => {
   const dispatch = useDispatch();
   const {isError,isLoading,users} = useSelector(({userReducer}) => userReducer);
+  const {isLoading : deleteLoading} = useSelector(({userReducer}) => userReducer.deleteData);
+  
+  //shows loader to only that button whose data is going to be deleted
+  const [deletingUserId, setDeletingUserId] = useState(null);
 
   // This Formats original Users data with the Keys and values that Ant D Table requires and returns formatted Data
   const formattedData = formatApiData(users);
@@ -24,11 +26,22 @@ const Home = () => {
     dispatch(getData(url));
   },[]);
 
-  const handleDelete = () => {
-    message.success('USer Deleted')
+  const handleDelete = (user_id) => {
+    setDeletingUserId(user_id)
+    const url = `${process.env.REACT_APP_BASE_URL}/users/delete/${user_id}`;
+    dispatch(deleteUser(url))
+    .then((res) => {
+      console.log(res);
+      message.success('User has been Deleted Successfully');
+    })
+    .catch((error) => {
+      console.log(error);
+      message.error(error.message);
+    })
       console.log('hii')
   }
 
+  console.log('render')
 
   const columns = [
     {
@@ -63,15 +76,18 @@ const Home = () => {
     {
       title: 'Delete',
       dataIndex: 'button3',
-      render : (text) => {
+      render : (text,record) => {
+
+          const deleteRow  = record.user_id === deletingUserId;
+
           return <Popconfirm
           title="Delete the task"
           description="Are you sure to delete this User?"
-          onConfirm={handleDelete}
+          onConfirm={() => handleDelete(record.user_id)}
           okText="Yes"
           cancelText="No"
         > 
-          <Button icon = {<DeleteOutlined />} danger = {true}>{text}</Button>
+          <Button loading = {deleteRow ? deleteLoading : false} icon = {<DeleteOutlined />} danger = {true}>{text}</Button>
         </Popconfirm>
       }
     },

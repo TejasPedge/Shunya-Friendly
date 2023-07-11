@@ -5,9 +5,14 @@ import {Empty} from 'antd';
 
 const TableComponent = ({isLoading,columns,formattedData}) => {
 
+  console.log(isLoading)
 
     if(isLoading) {
       return <div style = {{display : 'flex', justifyContent : 'center', marginTop : '10px'}}><Spin/></div>
+    }
+
+    if(!formattedData) {
+      return null
     }
 
     if(formattedData.length === 0) {
