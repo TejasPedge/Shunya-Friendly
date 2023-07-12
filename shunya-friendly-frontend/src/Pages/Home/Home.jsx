@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, message } from 'antd';
+import { Avatar, Button, Modal, message, notification } from 'antd';
 import { UserAddOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import style from './Home.module.css'
 import TableComponent from '../../Components/TableComp';
@@ -14,16 +14,59 @@ const Home = () => {
   const dispatch = useDispatch();
   const {isError,isLoading,users} = useSelector(({userReducer}) => userReducer);
   const {isLoading : deleteLoading} = useSelector(({userReducer}) => userReducer.deleteData);
+  const [api, contextHolder] = notification.useNotification();
+
+  const isNotificationShown = JSON.parse(localStorage.getItem('isNotificationShown')) || false;
+
   
   //shows loader to only that button whose data is going to be deleted
   const [deletingUserId, setDeletingUserId] = useState(null);
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState('');
+
+  // used For User Profile Preview;
+  const handleCancel = () => setPreviewOpen(false);
+  const handleImagePreview = (profile_pic_url) => {
+    if(!profile_pic_url) {
+      return 
+    }
+    setPreviewOpen(true)
+    setPreviewImage(profile_pic_url);
+    setPreviewOpen(true);
+  }
 
   // This Formats original Users data with the Keys and values that Ant D Table requires and returns formatted Data
   const formattedData = formatApiData(users);
 
+  // Feature Update Notification
+  
+  const featureUpdate = () => {
+    api.info({
+      message: '🥳 New Feature Update 🥳',
+      description: 'Now you can add Profile Pictures to the user Data',
+      duration: 7
+    });
+  };
+
+  const featureUpdate2 = () => {
+    api.info({
+      message: '🥳 New Feature Update 🥳',
+      description: 'Click On User Avatar to Preview',
+      duration: 14 
+    });
+  };
+
+  const showNotification = () => {
+    featureUpdate();
+    featureUpdate2();
+    localStorage.setItem('isNotificationShown',JSON.stringify(true));
+  }
+
   useEffect(() => {
     const url = `${process.env.REACT_APP_BASE_URL}/users/get`;
     dispatch(getData(url));
+    // Shows notification only once not shown again on refreshing
+    !isNotificationShown && showNotification();
   },[]);
 
   const handleDelete = (user_id) => {
@@ -44,6 +87,15 @@ const Home = () => {
   console.log('render')
 
   const columns = [
+    {
+      title: 'Profile Pic',
+      dataIndex: 'profile_pic',
+      render: (profile_pic_url,record) => {
+      return <span onClick = {() => handleImagePreview(profile_pic_url)} style = {{color : '#0088ff'}}>    
+          {profile_pic_url ? <Avatar src={<img src={profile_pic_url} alt="avatar" />}></Avatar>:<Avatar style={{ backgroundColor: '#fde3cf', color: '#f56a00' }}>{record.name.trim()[0].toUpperCase()}</Avatar>}
+      </span>
+      }
+    },
     {
       title: 'User ID',
       dataIndex: 'user_id',
@@ -68,6 +120,21 @@ const Home = () => {
       title: 'Edit',
       dataIndex: 'button2',
       render : (text, record) => {
+
+        const defaultProfilePic = {   // to populate the profile pic we have to pass this object to the form
+          uid: '-1',
+          name: record.name,
+          status: 'done',
+          url: record.profile_pic,
+          thumbUrl: record.profile_pic
+        }
+
+        if(record.profile_pic) {
+          record.defaultProfilePic = defaultProfilePic;
+        }
+
+          console.log('edit',record);
+
           return <Link to = '/create-user?from=edit' state = {record}>
               <Button icon = {<EditOutlined />}>{text}</Button>
           </Link>
@@ -104,12 +171,17 @@ const Home = () => {
 
   return (
     <>
+        {/* Shows notification */}
+        {contextHolder} 
         <div className = {style['add-user-container']}>
             <Link to = '/create-user?from=addUser'><Button type = 'primary' icon = {<UserAddOutlined />}>Add Users</Button></Link>
         </div>
 
         <div className = {style.tablecontainer}>
             <TableComponent isLoading = {isLoading} columns = {columns} formattedData = {formattedData}/>
+            <Modal open={previewOpen}  footer={null} onCancel={handleCancel}>
+              <img alt="example" style={{ width: '100%' }} src={previewImage} />
+            </Modal>
         </div>
     </>
   )
