@@ -76,18 +76,19 @@ const FormComp = () => {
 
         console.log('formdata',form_data);
 
+        // stops request if wrong mime type uploaded
+          if(isUploadError) {
+            const errorToast = () => {
+              messageApi.open({
+                  type: 'error',
+                  content: 'Only image files are allowed',
+              });
+          };
+          errorToast();
+          return 
+        }
+
         if (cameFrom !== 'edit') {
-          // stops request if wrong mime type uploaded
-            if(isUploadError) {
-                const errorToast = () => {
-                  messageApi.open({
-                      type: 'error',
-                      content: 'Only image files are allowed',
-                  });
-              };
-              errorToast();
-              return 
-            }
 
             const url = `${process.env.REACT_APP_BASE_URL}/users/post`
             dispatch(createUsers(url, form_data ))
